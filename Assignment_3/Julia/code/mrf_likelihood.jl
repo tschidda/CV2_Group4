@@ -6,13 +6,12 @@ function mrf_denoise_nllh(x::Array{Float64,2}, y::Array{Float64, 2}, sigma)
 end
 
 function grad_mrf_denoise_nllh(x::Array{Float64,2}, y::Array{Float64,2}, sigma)
-    g_nllh = zeros(Float64, size(x))
-    factor = 1/( -(sigma^2) )
+    g_nllh = zeros(Float64, size(x));
     for i in 1:size(x, 1)
         for j in 1:size(x, 2)
-            g_nllh[i,j]=(x[i,j]-y[i,j])
+            g_nllh[i,j]=(x[i,j]-y[i,j]);
         end
     end
-    g_nllh .*=factor
+    g_nllh .*= -1/(sigma^2);
     return -g_nllh;
 end

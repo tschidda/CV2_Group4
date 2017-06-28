@@ -1,18 +1,15 @@
 include("studentt.jl")
 
 function mrf_nlprior(x::Array{Float64,2}, sigma::Float64, alpha::Float64)
-    dh = diff(x,2)[:]
-    dv = diff(x,1)[:]
-
-    p = -sum(log(studentt(dv,sigma,alpha))) -sum(log(studentt(dh,sigma,alpha)))
+    p = -sum(log(studentt(diff(x,1)[:],sigma,alpha))) -sum(log(studentt(diff(x,2)[:],sigma,alpha)));
     return p::Float64;
 end
 
 function grad_mrf_nlprior(x::Array{Float64,2}, sigma::Float64, alpha::Float64)
-    p = zeros(Float64, size(x))
+    p = zeros(Float64, size(x));
     for i in 1:size(x,1)
         for j in 1:size(x,2)
-            dp = 0
+            dp = 0;
             if j < size(x,2)
                 dp += (grad_studentt(x[i,j]-x[i,j+1],sigma, alpha) ./ studentt(x[i,j]-x[i,j+1],sigma,alpha));
             end
@@ -25,7 +22,7 @@ function grad_mrf_nlprior(x::Array{Float64,2}, sigma::Float64, alpha::Float64)
             if i > 1
                 dp += (-grad_studentt(x[i-1,j]-x[i,j],sigma, alpha) ./ studentt(x[i-1,j]-x[i,j],sigma,alpha));
             end
-            p[i,j]=-dp
+            p[i,j]=-dp;
 
         end
     end
